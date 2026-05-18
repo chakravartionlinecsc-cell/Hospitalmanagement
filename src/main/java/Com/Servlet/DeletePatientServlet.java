@@ -1,41 +1,55 @@
-package Com.Servlet;
+ package com.servlet;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-/**
- * Servlet implementation class DeletePatientServlet
- */
-@WebServlet("/DeletePatientServlet")
+import com.dao.HospitalDAO;
+import com.model.Patient;
+
 public class DeletePatientServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DeletePatientServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+
+        res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+
+        int id = Integer.parseInt(req.getParameter("id"));
+
+        try {
+
+            HospitalDAO dao = new HospitalDAO();
+            Patient p = dao.getPatientById(id);
+
+            if (p == null) {
+                out.println("<h2 style='color:red;text-align:center;'>Patient Not Found</h2>");
+                return;
+            }
+
+            out.println("<html><body style='font-family:Segoe UI;text-align:center;background:#e6b8c2;'>");
+
+            out.println("<h2>Confirm Delete</h2>");
+
+            out.println("<div style='background:white;width:400px;margin:auto;padding:20px;border-radius:10px;'>");
+
+            out.println("<p><b>ID:</b> " + p.getPatientID() + "</p>");
+            out.println("<p><b>Name:</b> " + p.getPatientName() + "</p>");
+            out.println("<p><b>Gender:</b> " + p.getGender() + "</p>");
+            out.println("<p><b>Ailment:</b> " + p.getAilment() + "</p>");
+            out.println("<p><b>Doctor:</b> " + p.getAssignedDoctor() + "</p>");
+
+            out.println("<form action='ConfirmDeleteServlet' method='post'>");
+            out.println("<input type='hidden' name='id' value='" + p.getPatientID() + "'>");
+            out.println("<button style='background:red;color:white;padding:10px;border:none;border-radius:10px;'>DELETE</button>");
+            out.println("</form>");
+
+            out.println("<br><a href='patientdelete.jsp'>Cancel</a>");
+
+            out.println("</div></body></html>");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
 }
