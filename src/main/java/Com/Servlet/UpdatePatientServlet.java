@@ -1,41 +1,75 @@
-package Com.Servlet;
+ package com.servlet;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class UpdatePatientServlet
- */
-@WebServlet("/UpdatePatientServlet")
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import com.dao.HospitalDAO;
+import com.model.Patient;
+
 public class UpdatePatientServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public UpdatePatientServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+
+    protected void doPost(HttpServletRequest req,
+                          HttpServletResponse res)
+            throws ServletException, IOException {
+
+        try {
+
+            // Doctor dropdown handling
+            String doctor = req.getParameter("doctor");
+
+            if(doctor.equals("Other")) {
+
+                doctor = req.getParameter("otherDoctor");
+            }
+
+            // Disease dropdown handling
+            String ailment = req.getParameter("ailment");
+
+            if(ailment.equals("Other")) {
+
+                ailment = req.getParameter("otherDisease");
+            }
+
+            Patient p = new Patient(
+
+                Integer.parseInt(req.getParameter("id")),
+
+                req.getParameter("name"),
+
+                req.getParameter("dob"),
+
+                req.getParameter("gender"),
+
+                Double.parseDouble(req.getParameter("weight")),
+
+                req.getParameter("date"),
+
+                ailment,
+
+                doctor
+            );
+
+            HospitalDAO dao = new HospitalDAO();
+
+            if(dao.updatePatient(p)) {
+
+                res.sendRedirect("patientdisplay.jsp");
+
+            } else {
+
+                res.getWriter().println("Update Failed!");
+
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            res.getWriter().println("Error Occurred!");
+
+        }
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
 }
