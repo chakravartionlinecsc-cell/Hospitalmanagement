@@ -1,41 +1,41 @@
-package Com.Servlet;
+ package com.servlet;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
-/**
- * Servlet implementation class AddPatientServlet
- */
-@WebServlet("/AddPatientServlet")
+import com.dao.HospitalDAO;
+import com.model.Patient;
+
 public class AddPatientServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AddPatientServlet() {
-        super();
-        // TODO Auto-generated constructor stub
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        try {
+
+            String name = request.getParameter("name");
+            int age = Integer.parseInt(request.getParameter("age"));
+            String gender = request.getParameter("gender");
+            String date = request.getParameter("date");
+            String ailment = request.getParameter("ailment");
+            String doctor = request.getParameter("doctor");
+
+            // ❌ NO ID HERE
+            Patient p = new Patient(name, age, gender, date, ailment, doctor);
+
+            HospitalDAO dao = new HospitalDAO();
+            boolean result = dao.addPatient(p);
+
+            if (result) {
+                response.sendRedirect("index.jsp?msg=success");
+            } else {
+                response.sendRedirect("index.jsp?msg=fail");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("index.jsp?msg=error");
+        }
     }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
 }
